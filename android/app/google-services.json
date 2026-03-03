@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "482443196006",
+    "project_id": "shutternest-3139f",
+    "storage_bucket": "shutternest-3139f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:482443196006:android:709a420dc191df049fdfa7",
+        "android_client_info": {
+          "package_name": "com.example.shutter_nest"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAkjAEUaplpC8cK73EFTGGzSu51KO8tqcc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
