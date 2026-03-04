@@ -1,29 +1,39 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shutter_nest/features/home/models/unsplash_photo_model.dart';
+import 'package:shutter_nest/features/liked/repository/liked_photos_repository.dart';
+import 'package:shutter_nest/features/liked/repository/liked_photos_repository_provider.dart';
 
-/// IDs of photos the user has liked. Extend with a proper model when you have one.
-class LikedPhotosNotifier extends Notifier<List<String>> {
+/// Loads liked photos from DB and exposes add/remove/toggle. State is [AsyncValue]<[List]<[UnsplashPhoto]>>.
+class LikedPhotosNotifier extends AsyncNotifier<List<UnsplashPhoto>> {
+  LikedPhotosRepository get _repo => ref.read(likedPhotosRepositoryProvider);
+
   @override
-  List<String> build() => [];
-
-  void add(String id) {
-    if (state.contains(id)) return;
-    state = [...state, id];
+  Future<List<UnsplashPhoto>> build() async {
+    return _repo.getAll();
   }
 
-  void remove(String id) {
-    state = state.where((e) => e != id).toList();
+  Future<void> add(UnsplashPhoto photo) async {
+    await _repo.add(photo);
+    state = AsyncValue.data([...(state.value ?? []), photo]);
   }
 
-  void toggle(String id) {
-    if (state.contains(id)) {
-      remove(id);
+  Future<void> remove(String id) async {
+    await _repo.remove(id);
+    state = AsyncValue.data((state.value ?? []).where((p) => p.id != id).toList());
+  }
+
+  Future<void> toggle(UnsplashPhoto photo) async {
+    if (isLiked(photo.id)) {
+      await remove(photo.id);
     } else {
-      add(id);
+      await add(photo);
     }
   }
 
-  bool isLiked(String id) => state.contains(id);
+  bool isLiked(String id) => (state.value ?? []).any((p) => p.id == id);
 }
 
 final likedPhotosProvider =
-    NotifierProvider<LikedPhotosNotifier, List<String>>(LikedPhotosNotifier.new);
+    AsyncNotifierProvider<LikedPhotosNotifier, List<UnsplashPhoto>>(
+  LikedPhotosNotifier.new,
+);
