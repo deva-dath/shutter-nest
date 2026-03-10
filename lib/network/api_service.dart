@@ -1,6 +1,9 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+
+const String _logTag = '[ApiService]';
 
 /// Common API service for HTTP calls. Configure base URL and default headers here.
 class ApiService {
@@ -39,15 +42,30 @@ class ApiService {
     final uri = Uri.parse(_baseUrl + path).replace(queryParameters: queryParams);
     final requestHeaders = {..._headers, ...?headersOverride};
 
+    debugPrint('$_logTag GET ${uri.toString()}');
+
     try {
+      final stopwatch = Stopwatch()..start();
       final response = await _client.get(uri, headers: requestHeaders);
+      stopwatch.stop();
       final success = response.statusCode >= 200 && response.statusCode < 300;
+
+      debugPrint(
+        '$_logTag GET ${uri.toString()} -> ${response.statusCode} '
+        '(${success ? "OK" : "FAIL"}) ${response.body.length} bytes in ${stopwatch.elapsedMilliseconds}ms',
+      );
+      if (response.body.isNotEmpty) {
+        _logResponse(response.body);
+      }
+
       return ApiResponse(
         statusCode: response.statusCode,
         body: response.body,
         success: success,
       );
     } catch (e, stack) {
+      debugPrint('$_logTag GET ${uri.toString()} -> ERROR: $e');
+      debugPrint('$_logTag StackTrace: $stack');
       return ApiResponse(
         statusCode: -1,
         body: e.toString(),
@@ -68,19 +86,34 @@ class ApiService {
     final requestHeaders = {..._headers, ...?headersOverride};
     final encodedBody = body is Map ? jsonEncode(body) : body?.toString();
 
+    debugPrint('$_logTag POST ${uri.toString()} (body length: ${encodedBody?.length ?? 0})');
+
     try {
+      final stopwatch = Stopwatch()..start();
       final response = await _client.post(
         uri,
         headers: requestHeaders,
         body: encodedBody,
       );
+      stopwatch.stop();
       final success = response.statusCode >= 200 && response.statusCode < 300;
+
+      debugPrint(
+        '$_logTag POST ${uri.toString()} -> ${response.statusCode} '
+        '(${success ? "OK" : "FAIL"}) ${response.body.length} bytes in ${stopwatch.elapsedMilliseconds}ms',
+      );
+      if (response.body.isNotEmpty) {
+        _logResponse(response.body);
+      }
+
       return ApiResponse(
         statusCode: response.statusCode,
         body: response.body,
         success: success,
       );
     } catch (e, stack) {
+      debugPrint('$_logTag POST ${uri.toString()} -> ERROR: $e');
+      debugPrint('$_logTag StackTrace: $stack');
       return ApiResponse(
         statusCode: -1,
         body: e.toString(),
@@ -88,6 +121,16 @@ class ApiService {
         error: e,
         stackTrace: stack,
       );
+    }
+  }
+
+  /// Logs full response body. Chunks long output so nothing is truncated.
+  static void _logResponse(String body) {
+    debugPrint('$_logTag Response (full):');
+    const int chunkSize = 1000;
+    for (int i = 0; i < body.length; i += chunkSize) {
+      final end = (i + chunkSize < body.length) ? i + chunkSize : body.length;
+      debugPrint(body.substring(i, end));
     }
   }
 }

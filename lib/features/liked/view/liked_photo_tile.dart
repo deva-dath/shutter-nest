@@ -3,8 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:shutter_nest/core/widgets/like_heart_icon.dart';
 import 'package:shutter_nest/features/home/models/unsplash_photo_model.dart';
 
-/// Tile for a liked photo: image, heart (red), tap heart to unlike.
-class LikedPhotoTile extends StatelessWidget {
+/// Duration for the fade-out when unliking.
+const Duration _unlikeFadeDuration = Duration(milliseconds: 280);
+
+/// Tile for a liked photo: image, heart (red). Tap heart to unlike; tile fades out then is removed.
+class LikedPhotoTile extends StatefulWidget {
   const LikedPhotoTile({
     super.key,
     required this.photo,
@@ -17,49 +20,90 @@ class LikedPhotoTile extends StatelessWidget {
   final VoidCallback onUnlike;
 
   @override
+  State<LikedPhotoTile> createState() => _LikedPhotoTileState();
+}
+
+class _LikedPhotoTileState extends State<LikedPhotoTile>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _fadeController;
+  late final Animation<double> _fadeAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _fadeController = AnimationController(
+      vsync: this,
+      duration: _unlikeFadeDuration,
+    );
+    _fadeAnimation = Tween<double>(begin: 1, end: 0).animate(
+      CurvedAnimation(parent: _fadeController, curve: Curves.easeOut),
+    );
+    _fadeController.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        widget.onUnlike();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _fadeController.dispose();
+    super.dispose();
+  }
+
+  void _onUnlike() {
+    if (_fadeController.isAnimating) return;
+    _fadeController.forward();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(12),
-      child: SizedBox(
-        height: height,
-        width: double.infinity,
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            CachedNetworkImage(
-              imageUrl: photo.urls.small,
-              fit: BoxFit.cover,
-              placeholder: (_, __) => _Placeholder(height: height),
-              errorWidget: (_, __, ___) => _ErrorPlaceholder(height: height),
-            ),
-            Positioned(
-              top: 8,
-              right: 8,
-              child: LikeHeartIcon(
-                isLiked: true,
-                onTap: onUnlike,
-                size: 28,
+    return FadeTransition(
+      opacity: _fadeAnimation,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: SizedBox(
+          height: widget.height,
+          width: double.infinity,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              CachedNetworkImage(
+                imageUrl: widget.photo.urls.small,
+                fit: BoxFit.cover,
+                placeholder: (_, __) => _Placeholder(height: widget.height),
+                errorWidget: (_, __, ___) =>
+                    _ErrorPlaceholder(height: widget.height),
               ),
-            ),
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 0,
-              height: 48,
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.transparent,
-                      Colors.black.withValues(alpha: 0.4),
-                    ],
+              Positioned(
+                top: 8,
+                right: 8,
+                child: LikeHeartIcon(
+                  isLiked: true,
+                  onTap: _onUnlike,
+                  size: 28,
+                ),
+              ),
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0,
+                height: 48,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.transparent,
+                        Colors.black.withValues(alpha: 0.4),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

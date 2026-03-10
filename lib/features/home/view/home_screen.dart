@@ -117,7 +117,7 @@ class _HomePageState extends ConsumerState<HomePage> {
   }
 }
 
-class _PhotoTile extends StatelessWidget {
+class _PhotoTile extends StatefulWidget {
   const _PhotoTile({
     required this.photo,
     required this.height,
@@ -131,27 +131,86 @@ class _PhotoTile extends StatelessWidget {
   final VoidCallback onLikeTap;
 
   @override
+  State<_PhotoTile> createState() => _PhotoTileState();
+}
+
+class _PhotoTileState extends State<_PhotoTile>
+    with SingleTickerProviderStateMixin {
+  static const Duration _popDuration = Duration(milliseconds: 550);
+
+  late final AnimationController _popController;
+  late final Animation<double> _popScale;
+
+  @override
+  void initState() {
+    super.initState();
+    _popController = AnimationController(vsync: this, duration: _popDuration);
+    _popScale = TweenSequence<double>([
+      TweenSequenceItem(
+        tween: Tween(begin: 0.0, end: 1.35)
+            .chain(CurveTween(curve: Curves.elasticOut)),
+        weight: 48,
+      ),
+      TweenSequenceItem(
+        tween: Tween(begin: 1.35, end: 0.0)
+            .chain(CurveTween(curve: Curves.easeIn)),
+        weight: 52,
+      ),
+    ]).animate(_popController);
+    _popController.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        _popController.reset();
+        if (mounted) setState(() {});
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _popController.dispose();
+    super.dispose();
+  }
+
+  void _onLikeTap() {
+    widget.onLikeTap();
+    if (!widget.isLiked) {
+      setState(() {});
+      _popController.forward();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final showPop = _popController.isAnimating || _popController.status == AnimationStatus.forward;
+
     return ClipRRect(
       borderRadius: BorderRadius.circular(12),
       child: SizedBox(
-        height: height,
+        height: widget.height,
         width: double.infinity,
         child: Stack(
           fit: StackFit.expand,
+          clipBehavior: Clip.none,
           children: [
             CachedNetworkImage(
-              imageUrl: photo.urls.small,
+              imageUrl: widget.photo.urls.small,
               fit: BoxFit.cover,
-              placeholder: (_, __) => _PlaceholderTile(height: height),
-              errorWidget: (_, __, ___) => _ErrorPlaceholder(height: height),
+              placeholder: (_, __) => _PlaceholderTile(height: widget.height),
+              errorWidget: (_, __, ___) => _ErrorPlaceholder(height: widget.height),
             ),
+            if (showPop)
+              Center(
+                child: ScaleTransition(
+                  scale: _popScale,
+                  child: _CenterHeart(size: 56),
+                ),
+              ),
             Positioned(
               top: 8,
               right: 8,
               child: LikeHeartIcon(
-                isLiked: isLiked,
-                onTap: onLikeTap,
+                isLiked: widget.isLiked,
+                onTap: _onLikeTap,
                 size: 28,
               ),
             ),
@@ -176,6 +235,22 @@ class _PhotoTile extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Red heart used for the center pop animation.
+class _CenterHeart extends StatelessWidget {
+  const _CenterHeart({this.size = 56});
+
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    return Icon(
+      Icons.favorite,
+      size: size,
+      color: Colors.red,
     );
   }
 }
