@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shutter_nest/app/appcolors.dart';
 import 'package:shutter_nest/core/utils/adaptive_glass.dart';
 
 /// Tab definition for [ShutterBottomNav].
@@ -28,15 +29,11 @@ class ShutterBottomNav extends StatelessWidget {
   final ValueChanged<int> onTap;
   final List<ShutterNavItem> items;
 
-  /// Brand green used on splash and app theme.
-  static const Color _brandGreen = Color(0xFF1E7F3E);
-  static const Color _brandGreenLight = Color(0xFF6DBE45);
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final selectedColor = isDark ? _brandGreenLight : _brandGreen;
+    final selectedColor = isDark ? AppColors.brandGreenLight : AppColors.brandGreen;
     final unselectedColor = theme.colorScheme.onSurface.withValues(alpha: 0.7);
 
     return AdaptiveGlass.navBar(
@@ -58,7 +55,7 @@ class ShutterBottomNav extends StatelessWidget {
                     : item.icon;
                 return Expanded(
                   child: Material(
-                    color: Colors.transparent,
+                    color: AppColors.transparent,
                     child: InkWell(
                       onTap: () => onTap(index),
                       borderRadius: BorderRadius.circular(12),

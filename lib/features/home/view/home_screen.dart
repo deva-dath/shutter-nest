@@ -2,11 +2,13 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:shutter_nest/app/app_strings.dart';
+import 'package:shutter_nest/app/appcolors.dart';
+import 'package:shutter_nest/core/providers/liked_photos_provider.dart';
 import 'package:shutter_nest/core/utils/shutter_app_bar.dart';
 import 'package:shutter_nest/core/widgets/like_heart_icon.dart';
 import 'package:shutter_nest/features/home/models/unsplash_photo_model.dart';
 import 'package:shutter_nest/features/home/viewmodel/home_viewmodel.dart';
-import 'package:shutter_nest/core/providers/liked_photos_provider.dart';
 
 /// Varying tile heights for staggered masonry when photo aspect is square or missing.
 const List<double> _fallbackHeights = [
@@ -50,7 +52,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     final crossAxisWidth = (MediaQuery.sizeOf(context).width - 12 * 3) / 2;
 
     return Scaffold(
-      appBar: const ShutterAppBar(title: 'Home'),
+      appBar: const ShutterAppBar(title: AppStrings.titleHome),
       body: state.isLoading && state.photos.isEmpty
           ? const Center(child: CircularProgressIndicator())
           : state.error != null && state.photos.isEmpty
@@ -70,7 +72,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                           onPressed: () => ref
                               .read(homeViewModelProvider.notifier)
                               .loadPhotos(perPage: 24),
-                          child: const Text('Retry'),
+                          child: const Text(AppStrings.buttonRetry),
                         ),
                       ],
                     ),
@@ -84,7 +86,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                           ? const SliverToBoxAdapter(
                               child: SizedBox(
                                 height: 200,
-                                child: Center(child: Text('No photos yet')),
+                                child: Center(child: Text(AppStrings.homeNoPhotos)),
                               ),
                             )
                           : SliverMasonryGrid.count(
@@ -225,8 +227,8 @@ class _PhotoTileState extends State<_PhotoTile>
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      Colors.transparent,
-                      Colors.black.withValues(alpha: 0.4),
+                      AppColors.transparent,
+                      AppColors.blackOpacity(0.4),
                     ],
                   ),
                 ),
@@ -247,11 +249,7 @@ class _CenterHeart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Icon(
-      Icons.favorite,
-      size: size,
-      color: Colors.red,
-    );
+    return Icon(Icons.favorite, size: size, color: AppColors.likeActive);
   }
 }
 

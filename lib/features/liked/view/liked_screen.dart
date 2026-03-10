@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:shutter_nest/app/app_strings.dart';
 import 'package:shutter_nest/core/utils/shutter_app_bar.dart';
 import 'package:shutter_nest/features/home/models/unsplash_photo_model.dart';
 import 'package:shutter_nest/features/liked/view/liked_photo_tile.dart';
@@ -23,7 +24,7 @@ class LikedPage extends ConsumerWidget {
     final crossAxisWidth = (MediaQuery.sizeOf(context).width - 12 * 3) / 2;
 
     return Scaffold(
-      appBar: const ShutterAppBar(title: 'Liked'),
+      appBar: const ShutterAppBar(title: AppStrings.titleLiked),
       body: likedAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(
@@ -40,7 +41,7 @@ class LikedPage extends ConsumerWidget {
                 const SizedBox(height: 16),
                 FilledButton(
                   onPressed: () => ref.invalidate(likedPhotosProvider),
-                  child: const Text('Retry'),
+                  child: const Text(AppStrings.buttonRetry),
                 ),
               ],
             ),
@@ -59,14 +60,14 @@ class LikedPage extends ConsumerWidget {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'No liked photos yet',
+                    AppStrings.likedEmpty,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Like photos from Home to see them here',
+                    AppStrings.likedEmptyHint,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.8),
                         ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shutter_nest/app/app_strings.dart';
 import 'package:shutter_nest/core/providers/theme_mode_provider.dart';
 
 class SettingsPage extends ConsumerWidget {
@@ -15,7 +16,7 @@ class SettingsPage extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              'Settings',
+              AppStrings.titleSettings,
               style: Theme.of(context).textTheme.headlineMedium,
             ),
             const SizedBox(height: 24),
@@ -24,17 +25,17 @@ class SettingsPage extends ConsumerWidget {
                 ButtonSegment(
                   value: ThemeMode.light,
                   icon: Icon(Icons.light_mode),
-                  label: Text('Light'),
+                  label: Text(AppStrings.settingsLight),
                 ),
                 ButtonSegment(
                   value: ThemeMode.dark,
                   icon: Icon(Icons.dark_mode),
-                  label: Text('Dark'),
+                  label: Text(AppStrings.settingsDark),
                 ),
                 ButtonSegment(
                   value: ThemeMode.system,
                   icon: Icon(Icons.brightness_auto),
-                  label: Text('System'),
+                  label: Text(AppStrings.settingsSystem),
                 ),
               ],
               selected: {themeMode},

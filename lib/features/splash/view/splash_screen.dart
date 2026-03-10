@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shutter_nest/app/app_strings.dart';
+import 'package:shutter_nest/app/appcolors.dart';
 import 'package:shutter_nest/app/constants/route_constants.dart';
 import 'package:shutter_nest/core/providers/router_provider.dart';
 
@@ -13,7 +15,7 @@ class SplashPage extends ConsumerStatefulWidget {
 
 class _SplashPageState extends ConsumerState<SplashPage>
     with SingleTickerProviderStateMixin {
-  final String _fullText = "SHUTTERNEST";
+  final String _fullText = AppStrings.splashBrandText;
   String _visibleText = "";
   int _index = 0;
 
@@ -48,18 +50,18 @@ class _SplashPageState extends ConsumerState<SplashPage>
           gradient: RadialGradient(
             center: Alignment.center,
             radius: 1.2,
-            colors: [Color(0xFF6DBE45), Color(0xFF1E7F3E)],
+            colors: [AppColors.brandGreenLight, AppColors.brandGreen],
           ),
         ),
         child: Center(
           child: Text(
             _visibleText,
             style: const TextStyle(
-              fontFamily: 'Gavister',
+              fontFamily: AppStrings.splashFontFamily,
               fontSize: 45,
               fontWeight: FontWeight.w900,
               letterSpacing: 4,
-              color: Colors.white,
+              color: AppColors.onGreen,
             ),
           ),
         ),

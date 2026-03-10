@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shutter_nest/app/appcolors.dart';
 import 'package:shutter_nest/core/utils/adaptive_glass.dart';
 
 /// Theme-aligned app bar for ShutterNest. Uses brand green, gradient, or optional glass.
@@ -13,7 +14,7 @@ class ShutterAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.onLeadingTap,
     this.actions,
     this.useGlass = false,
-    this.gradient = defaultGradient,
+    this.gradient = AppColors.defaultGradient,
     this.centerTitle = true,
     this.automaticallyImplyLeading = true,
   });
@@ -32,24 +33,12 @@ class ShutterAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   /// When false (default), uses solid brand green or [gradient]. White content when not glass.
   final bool useGlass;
-  /// When set, app bar background uses this gradient (ignores solid color). Use [defaultGradient] for theme gradient.
+  /// When set, app bar background uses this gradient (ignores solid color). Use [AppColors.defaultGradient] for theme gradient.
   final Gradient? gradient;
   final bool centerTitle;
   final bool automaticallyImplyLeading;
 
   static const double _toolbarHeight = 56;
-
-  /// Brand green for app bar background.
-  static const Color _brandGreen = Color(0xFF1E7F3E);
-  static const Color _brandGreenLight = Color(0xFF6DBE45);
-  static const Color _onGreen = Colors.white;
-
-  /// Default gradient: lighter green to darker green (top to bottom). Matches splash style.
-  static const LinearGradient defaultGradient = LinearGradient(
-    begin: Alignment.topCenter,
-    end: Alignment.bottomCenter,
-    colors: [_brandGreenLight, _brandGreen],
-  );
 
   @override
   Size get preferredSize => const Size.fromHeight(_toolbarHeight);
@@ -59,8 +48,8 @@ class ShutterAppBar extends StatelessWidget implements PreferredSizeWidget {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final isColoredBar = !useGlass;
-    final contentColor = isColoredBar ? _onGreen : theme.colorScheme.onSurface;
-    final iconColor = isColoredBar ? _onGreen : (isDark ? _brandGreenLight : _brandGreen);
+    final contentColor = isColoredBar ? AppColors.onGreen : theme.colorScheme.onSurface;
+    final iconColor = isColoredBar ? AppColors.onGreen : (isDark ? AppColors.brandGreenLight : AppColors.brandGreen);
 
     Widget? leadingWidget = leading;
     if (leadingWidget == null &&
@@ -123,7 +112,7 @@ class ShutterAppBar extends StatelessWidget implements PreferredSizeWidget {
             child: barContent,
           )
         : Material(
-            color: isDark ? _brandGreenLight : _brandGreen,
+            color: isDark ? AppColors.brandGreenLight : AppColors.brandGreen,
             elevation: 0,
             child: barContent,
           );

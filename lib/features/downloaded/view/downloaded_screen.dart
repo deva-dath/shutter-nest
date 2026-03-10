@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shutter_nest/app/app_strings.dart';
 import 'package:shutter_nest/core/providers/downloaded_photos_provider.dart';
 
 class DownloadedPage extends ConsumerWidget {
@@ -16,14 +17,14 @@ class DownloadedPage extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              'Downloaded Photos',
+              AppStrings.titleDownloadedPhotos,
               style: Theme.of(context).textTheme.headlineMedium,
             ),
             const SizedBox(height: 8),
             Text(
               count == 0
-                  ? 'No downloaded photos yet'
-                  : '$count photo${count == 1 ? '' : 's'} downloaded',
+                  ? AppStrings.downloadedEmpty
+                  : AppStrings.photosDownloaded(count),
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shutter_nest/app/appcolors.dart';
 
 /// Optional theme data for adaptive glass UI (blur and tint).
 class GlassThemeData {
@@ -33,8 +34,6 @@ class GlassTheme extends InheritedTheme {
 }
 
 class AppTheme {
-  static const _brandGreen = Color(0xFF1E7F3E);
-
   /// Default glass styling used by [AdaptiveGlass] when no theme is set.
   static const defaultGlass = GlassThemeData(
     blurSigma: 10.0,
@@ -45,18 +44,18 @@ class AppTheme {
   static final ThemeData lightTheme = ThemeData(
     useMaterial3: true,
     colorScheme: ColorScheme.fromSeed(
-      seedColor: _brandGreen,
+      seedColor: AppColors.brandGreen,
       brightness: Brightness.light,
     ),
-    scaffoldBackgroundColor: const Color(0xFFF8FAF9),
+    scaffoldBackgroundColor: AppColors.scaffoldLight,
   );
 
   static final ThemeData darkTheme = ThemeData(
     useMaterial3: true,
     colorScheme: ColorScheme.fromSeed(
-      seedColor: const Color(0xFF6DBE45),
+      seedColor: AppColors.brandGreenLight,
       brightness: Brightness.dark,
     ),
-    scaffoldBackgroundColor: const Color(0xFF0F1A14),
+    scaffoldBackgroundColor: AppColors.scaffoldDark,
   );
 }

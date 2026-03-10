@@ -1,3 +1,4 @@
+import 'package:shutter_nest/app/app_strings.dart';
 import 'package:shutter_nest/app/models/base_response_model.dart';
 
 /// Single Unsplash photo (subset of API fields used in the app).
@@ -106,7 +107,7 @@ class UnsplashPhotosResponse extends BaseResponseModel<List<UnsplashPhoto>> {
         errors: errors?.map((e) => e.toString()).toList(),
       );
     }
-    return const UnsplashPhotosResponse(success: false, message: 'Invalid response');
+    return UnsplashPhotosResponse(success: false, message: AppStrings.errorInvalidResponse);
   }
 
   List<UnsplashPhoto> get photos => data ?? [];

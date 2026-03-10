@@ -1,3 +1,4 @@
+import 'package:shutter_nest/app/app_strings.dart';
 import 'package:shutter_nest/app/models/base_response_model.dart';
 import 'package:shutter_nest/features/home/models/unsplash_photo_model.dart';
 
@@ -29,7 +30,7 @@ class UnsplashSearchResponse extends BaseResponseModel<SearchPhotosData> {
     if (json is! Map<String, dynamic>) {
       return const UnsplashSearchResponse(
         success: false,
-        message: 'Invalid response',
+        message: AppStrings.errorInvalidResponse,
       );
     }
     final errors = json['errors'] as List<dynamic>?;

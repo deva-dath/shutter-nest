@@ -1,3 +1,4 @@
+import 'package:shutter_nest/app/app_strings.dart';
 import 'package:shutter_nest/features/search/models/search_photos_response.dart';
 import 'package:shutter_nest/network/api_service.dart';
 
@@ -35,7 +36,7 @@ class SearchRepository {
     if (!response.success) {
       return UnsplashSearchResponse(
         success: false,
-        message: response.body.isNotEmpty ? response.body : 'Request failed',
+        message: response.body.isNotEmpty ? response.body : AppStrings.errorRequestFailed,
         errors: response.statusCode > 0 ? ['HTTP ${response.statusCode}'] : null,
       );
     }
@@ -44,7 +45,7 @@ class SearchRepository {
     if (json == null) {
       return const UnsplashSearchResponse(
         success: false,
-        message: 'Invalid response body',
+        message: AppStrings.errorInvalidResponseBody,
       );
     }
 

@@ -2,13 +2,26 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:shutter_nest/app/app_strings.dart';
+import 'package:shutter_nest/app/appcolors.dart';
 import 'package:shutter_nest/core/providers/liked_photos_provider.dart';
 import 'package:shutter_nest/core/utils/shutter_app_bar.dart';
 import 'package:shutter_nest/core/widgets/like_heart_icon.dart';
 import 'package:shutter_nest/features/home/models/unsplash_photo_model.dart';
 import 'package:shutter_nest/features/search/viewmodel/search_viewmodel.dart';
 
-const List<double> _fallbackHeights = [200, 280, 240, 320, 260, 300, 220, 290, 270, 310];
+const List<double> _fallbackHeights = [
+  200,
+  280,
+  240,
+  320,
+  260,
+  300,
+  220,
+  290,
+  270,
+  310,
+];
 
 class SearchPage extends ConsumerStatefulWidget {
   const SearchPage({super.key});
@@ -63,16 +76,23 @@ class _SearchPageState extends ConsumerState<SearchPage> {
     final crossAxisWidth = (MediaQuery.sizeOf(context).width - 12 * 3) / 2;
 
     return Scaffold(
-      appBar: const ShutterAppBar(title: 'Search'),
+      appBar: const ShutterAppBar(title: AppStrings.titleSearch),
       body: Column(
         children: [
+          SizedBox(height: 20),
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+            padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
             child: TextField(
               controller: _searchController,
               focusNode: _focusNode,
               decoration: InputDecoration(
-                hintText: 'Search photos...',
+                isDense: true,
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 10,
+                ),
+                fillColor: AppColors.inputFill,
+                hintText: AppStrings.searchHint,
                 prefixIcon: const Icon(Icons.search_rounded),
                 suffixIcon: _searchController.text.isNotEmpty
                     ? IconButton(
@@ -85,7 +105,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                       )
                     : null,
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(25),
                 ),
                 filled: true,
               ),
@@ -98,78 +118,95 @@ class _SearchPageState extends ConsumerState<SearchPage> {
             child: state.query.isEmpty
                 ? Center(
                     child: Text(
-                      'Enter a term to search Unsplash photos',
+                      AppStrings.searchEmptyPrompt,
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
-                          ),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withValues(alpha: 0.6),
+                      ),
                     ),
                   )
                 : state.isLoading && state.photos.isEmpty
-                    ? const Center(child: CircularProgressIndicator())
-                    : state.error != null && state.photos.isEmpty
-                        ? Center(
-                            child: Padding(
-                              padding: const EdgeInsets.all(24),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    state.error!,
-                                    textAlign: TextAlign.center,
-                                    style: Theme.of(context).textTheme.bodyLarge,
-                                  ),
-                                  const SizedBox(height: 16),
-                                  FilledButton(
-                                    onPressed: () => _submitSearch(state.query),
-                                    child: const Text('Retry'),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          )
-                        : state.photos.isEmpty
-                            ? Center(
-                                child: Text(
-                                  'No results for "${state.query}"',
-                                  style: Theme.of(context).textTheme.bodyLarge,
-                                ),
-                              )
-                            : CustomScrollView(
-                                controller: _scrollController,
-                                slivers: [
-                                  SliverPadding(
-                                    padding: const EdgeInsets.fromLTRB(12, 0, 12, 24),
-                                    sliver: SliverMasonryGrid.count(
-                                      crossAxisCount: 2,
-                                      mainAxisSpacing: 12,
-                                      crossAxisSpacing: 12,
-                                      childCount: state.photos.length + (state.hasMore && state.isLoading ? 1 : 0),
-                                      itemBuilder: (context, index) {
-                                        if (index >= state.photos.length) {
-                                          return const Padding(
-                                            padding: EdgeInsets.symmetric(vertical: 16),
-                                            child: Center(child: SizedBox(
-                                              width: 28,
-                                              height: 28,
-                                              child: CircularProgressIndicator(strokeWidth: 2),
-                                            )),
-                                          );
-                                        }
-                                        final photo = state.photos[index];
-                                        final height = _heightForPhoto(photo, crossAxisWidth);
-                                        final likedAsync = ref.watch(likedPhotosProvider);
-                                        final isLiked = likedAsync.value?.any((p) => p.id == photo.id) ?? false;
-                                        return _SearchPhotoTile(
-                                          photo: photo,
-                                          height: height,
-                                          isLiked: isLiked,
-                                          onLikeTap: () => ref.read(likedPhotosProvider.notifier).toggle(photo),
-                                        );
-                                      },
+                ? const Center(child: CircularProgressIndicator())
+                : state.error != null && state.photos.isEmpty
+                ? Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            state.error!,
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                          const SizedBox(height: 16),
+                          FilledButton(
+                            onPressed: () => _submitSearch(state.query),
+                            child: const Text(AppStrings.buttonRetry),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                : state.photos.isEmpty
+                ? Center(
+                    child: Text(
+                      AppStrings.noResultsFor(state.query),
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
+                  )
+                : CustomScrollView(
+                    controller: _scrollController,
+                    slivers: [
+                      SliverPadding(
+                        padding: const EdgeInsets.fromLTRB(12, 0, 12, 24),
+                        sliver: SliverMasonryGrid.count(
+                          crossAxisCount: 2,
+                          mainAxisSpacing: 12,
+                          crossAxisSpacing: 12,
+                          childCount:
+                              state.photos.length +
+                              (state.hasMore && state.isLoading ? 1 : 0),
+                          itemBuilder: (context, index) {
+                            if (index >= state.photos.length) {
+                              return const Padding(
+                                padding: EdgeInsets.symmetric(vertical: 16),
+                                child: Center(
+                                  child: SizedBox(
+                                    width: 28,
+                                    height: 28,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
                                     ),
                                   ),
-                                ],
-                              ),
+                                ),
+                              );
+                            }
+                            final photo = state.photos[index];
+                            final height = _heightForPhoto(
+                              photo,
+                              crossAxisWidth,
+                            );
+                            final likedAsync = ref.watch(likedPhotosProvider);
+                            final isLiked =
+                                likedAsync.value?.any(
+                                  (p) => p.id == photo.id,
+                                ) ??
+                                false;
+                            return _SearchPhotoTile(
+                              photo: photo,
+                              height: height,
+                              isLiked: isLiked,
+                              onLikeTap: () => ref
+                                  .read(likedPhotosProvider.notifier)
+                                  .toggle(photo),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
           ),
         ],
       ),
@@ -206,11 +243,17 @@ class _SearchPhotoTileState extends State<_SearchPhotoTile>
     _popController = AnimationController(vsync: this, duration: _popDuration);
     _popScale = TweenSequence<double>([
       TweenSequenceItem(
-        tween: Tween(begin: 0.0, end: 1.35).chain(CurveTween(curve: Curves.elasticOut)),
+        tween: Tween(
+          begin: 0.0,
+          end: 1.35,
+        ).chain(CurveTween(curve: Curves.elasticOut)),
         weight: 48,
       ),
       TweenSequenceItem(
-        tween: Tween(begin: 1.35, end: 0.0).chain(CurveTween(curve: Curves.easeIn)),
+        tween: Tween(
+          begin: 1.35,
+          end: 0.0,
+        ).chain(CurveTween(curve: Curves.easeIn)),
         weight: 52,
       ),
     ]).animate(_popController);
@@ -238,7 +281,9 @@ class _SearchPhotoTileState extends State<_SearchPhotoTile>
 
   @override
   Widget build(BuildContext context) {
-    final showPop = _popController.isAnimating || _popController.status == AnimationStatus.forward;
+    final showPop =
+        _popController.isAnimating ||
+        _popController.status == AnimationStatus.forward;
     final theme = Theme.of(context);
 
     return ClipRRect(
@@ -260,7 +305,10 @@ class _SearchPhotoTileState extends State<_SearchPhotoTile>
                   child: SizedBox(
                     width: 28,
                     height: 28,
-                    child: CircularProgressIndicator(strokeWidth: 2, color: theme.colorScheme.primary),
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: theme.colorScheme.primary,
+                    ),
                   ),
                 ),
               ),
@@ -268,7 +316,11 @@ class _SearchPhotoTileState extends State<_SearchPhotoTile>
                 height: widget.height,
                 color: theme.colorScheme.surfaceContainerHighest,
                 child: Center(
-                  child: Icon(Icons.photo_outlined, size: 48, color: theme.colorScheme.onSurface.withValues(alpha: 0.4)),
+                  child: Icon(
+                    Icons.photo_outlined,
+                    size: 48,
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
+                  ),
                 ),
               ),
             ),
@@ -276,7 +328,11 @@ class _SearchPhotoTileState extends State<_SearchPhotoTile>
               Center(
                 child: ScaleTransition(
                   scale: _popScale,
-                  child: const Icon(Icons.favorite, size: 56, color: Colors.red),
+                  child: const Icon(
+                    Icons.favorite,
+                    size: 56,
+                    color: AppColors.likeActive,
+                  ),
                 ),
               ),
             Positioned(
@@ -298,7 +354,10 @@ class _SearchPhotoTileState extends State<_SearchPhotoTile>
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
-                    colors: [Colors.transparent, Colors.black.withValues(alpha: 0.4)],
+                    colors: [
+                      AppColors.transparent,
+                      AppColors.blackOpacity(0.4),
+                    ],
                   ),
                 ),
               ),

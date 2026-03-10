@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:shutter_nest/app/appcolors.dart';
 import 'package:shutter_nest/core/widgets/like_heart_icon.dart';
 import 'package:shutter_nest/features/home/models/unsplash_photo_model.dart';
 
@@ -95,8 +96,8 @@ class _LikedPhotoTileState extends State<LikedPhotoTile>
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                       colors: [
-                        Colors.transparent,
-                        Colors.black.withValues(alpha: 0.4),
+                        AppColors.transparent,
+                        AppColors.blackOpacity(0.4),
                       ],
                     ),
                   ),

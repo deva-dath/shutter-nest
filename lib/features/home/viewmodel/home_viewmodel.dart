@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shutter_nest/app/app_strings.dart';
 import 'package:shutter_nest/features/home/models/unsplash_photo_model.dart';
 import 'package:shutter_nest/features/home/repository/home_repository.dart';
 import 'package:shutter_nest/features/home/repository/home_repository_provider.dart';
@@ -42,7 +43,7 @@ class HomeViewModel extends Notifier<HomePhotosState> {
     if (!response.success) {
       state = state.copyWith(
         isLoading: false,
-        error: response.message ?? response.errors?.join(', ') ?? 'Failed to load photos',
+        error: response.message ?? response.errors?.join(', ') ?? AppStrings.errorLoadPhotosFailed,
       );
       return;
     }

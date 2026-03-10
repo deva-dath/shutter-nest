@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:shutter_nest/app/appcolors.dart';
 import 'package:shutter_nest/config/theme/app_theme.dart';
 
 /// Adaptive glass (glassmorphism) container that blurs content behind it
@@ -59,7 +60,7 @@ class AdaptiveGlass extends StatelessWidget {
       darkTintOpacity: 0.18,
       elevation: 2.0,
       border: Border.all(
-        color: Colors.white.withValues(alpha: 0.15),
+        color: AppColors.whiteOpacity(0.15),
         width: 1,
       ),
       child: child,
@@ -75,7 +76,7 @@ class AdaptiveGlass extends StatelessWidget {
     final tintOpacity = isDark
         ? (darkTintOpacity ?? glassTheme.darkTintOpacity)
         : (lightTintOpacity ?? glassTheme.lightTintOpacity);
-    final tintColor = isDark ? Colors.black : Colors.white;
+    final tintColor = isDark ? AppColors.glassTintDark : AppColors.glassTintLight;
     final radius = borderRadius ?? BorderRadius.zero;
 
     return ClipRRect(
@@ -90,9 +91,7 @@ class AdaptiveGlass extends StatelessWidget {
             boxShadow: elevation > 0
                 ? [
                     BoxShadow(
-                      color: Colors.black.withValues(
-                        alpha: isDark ? 0.25 : 0.08,
-                      ),
+                      color: AppColors.blackOpacity(isDark ? 0.25 : 0.08),
                       blurRadius: elevation * 4,
                       offset: Offset(0, elevation),
                     ),

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:shutter_nest/app/app_strings.dart';
 import 'package:shutter_nest/config/theme/app_theme.dart';
 import 'package:shutter_nest/core/providers/router_provider.dart';
 import 'package:shutter_nest/core/providers/theme_mode_provider.dart';
@@ -38,7 +39,7 @@ class ShutterNestApp extends ConsumerWidget {
 
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
-      title: 'ShutterNest',
+      title: AppStrings.appTitle,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeMode,

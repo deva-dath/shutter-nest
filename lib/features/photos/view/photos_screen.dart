@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shutter_nest/app/app_strings.dart';
 
 class PhotosPage extends ConsumerWidget {
   const PhotosPage({super.key});
@@ -9,7 +10,7 @@ class PhotosPage extends ConsumerWidget {
     return Scaffold(
       body: Center(
         child: Text(
-          'Photos',
+          AppStrings.titlePhotos,
           style: Theme.of(context).textTheme.headlineMedium,
         ),
       ),

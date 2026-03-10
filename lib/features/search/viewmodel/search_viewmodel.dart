@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shutter_nest/app/app_strings.dart';
 import 'package:shutter_nest/features/home/models/unsplash_photo_model.dart';
 import 'package:shutter_nest/features/search/repository/search_repository.dart';
 import 'package:shutter_nest/features/search/repository/search_repository_provider.dart';
@@ -85,7 +86,7 @@ class SearchViewModel extends Notifier<SearchState> {
     if (!response.success) {
       state = state.copyWith(
         isLoading: false,
-        error: response.message ?? response.errors?.join(', ') ?? 'Search failed',
+        error: response.message ?? response.errors?.join(', ') ?? AppStrings.errorSearchFailed,
       );
       return;
     }
@@ -112,7 +113,7 @@ class SearchViewModel extends Notifier<SearchState> {
     if (!response.success) {
       state = state.copyWith(
         isLoading: false,
-        error: response.message ?? 'Load more failed',
+        error: response.message ?? AppStrings.errorLoadMoreFailed,
       );
       return;
     }

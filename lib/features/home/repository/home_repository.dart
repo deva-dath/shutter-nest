@@ -1,3 +1,4 @@
+import 'package:shutter_nest/app/app_strings.dart';
 import 'package:shutter_nest/features/home/models/unsplash_photo_model.dart';
 import 'package:shutter_nest/network/api_service.dart';
 
@@ -20,7 +21,7 @@ class HomeRepository {
     if (!response.success) {
       return UnsplashPhotosResponse(
         success: false,
-        message: response.body.isNotEmpty ? response.body : 'Request failed',
+        message: response.body.isNotEmpty ? response.body : AppStrings.errorRequestFailed,
         errors: response.statusCode > 0 ? ['HTTP ${response.statusCode}'] : null,
       );
     }
@@ -29,7 +30,7 @@ class HomeRepository {
     if (json == null) {
       return const UnsplashPhotosResponse(
         success: false,
-        message: 'Invalid response body',
+        message: AppStrings.errorInvalidResponseBody,
       );
     }
 

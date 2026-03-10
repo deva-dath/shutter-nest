@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shutter_nest/app/appcolors.dart';
 
 /// Heart icon from assets. Red when [isLiked], otherwise white. Tappable [onTap].
 class LikeHeartIcon extends StatelessWidget {
@@ -18,7 +19,7 @@ class LikeHeartIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.transparent,
+      color: AppColors.transparent,
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(size / 2),
@@ -26,7 +27,7 @@ class LikeHeartIcon extends StatelessWidget {
           padding: EdgeInsets.all(size * 0.25),
           child: ColorFiltered(
             colorFilter: ColorFilter.mode(
-              isLiked ? Colors.red : Colors.white,
+              isLiked ? AppColors.likeActive : AppColors.likeInactive,
               BlendMode.srcIn,
             ),
             child: Image.asset(
@@ -37,7 +38,7 @@ class LikeHeartIcon extends StatelessWidget {
               errorBuilder: (_, __, ___) => Icon(
                 Icons.favorite,
                 size: size,
-                color: isLiked ? Colors.red : Colors.white,
+                color: isLiked ? AppColors.likeActive : AppColors.likeInactive,
               ),
             ),
           ),
