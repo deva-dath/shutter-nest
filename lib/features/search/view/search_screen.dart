@@ -65,9 +65,24 @@ class _SearchPageState extends ConsumerState<SearchPage> {
     super.dispose();
   }
 
+  /// Runs keyword search (GET /search/photos) with the given query.
   void _submitSearch(String query) {
-    if (query.trim().isEmpty) return;
-    ref.read(searchViewModelProvider.notifier).search(query);
+    final q = query.trim();
+    if (q.isEmpty) return;
+    ref.read(searchViewModelProvider.notifier).search(q);
+  }
+
+  /// Handles search field submit: in People mode uses value as username (GET /users/:username/photos), else keyword search.
+  void _onSearchSubmitted(String value) {
+    final q = value.trim();
+    if (q.isEmpty) return;
+    final vm = ref.read(searchViewModelProvider.notifier);
+    final state = ref.read(searchViewModelProvider);
+    if (state.isPeopleMode) {
+      vm.loadUserPhotos(q);
+    } else {
+      vm.search(q);
+    }
   }
 
   @override
@@ -109,16 +124,61 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                 ),
                 filled: true,
               ),
-              onSubmitted: _submitSearch,
+              onSubmitted: _onSearchSubmitted,
               onChanged: (_) => setState(() {}),
               textInputAction: TextInputAction.search,
             ),
           ),
+          SizedBox(
+            height: 44,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              itemCount: AppStrings.searchSuggestions.length,
+              separatorBuilder: (_, __) => const SizedBox(width: 8),
+              itemBuilder: (context, index) {
+                final term = AppStrings.searchSuggestions[index];
+                final isPeople = term == 'People';
+                final isSelected = isPeople
+                    ? state.isPeopleMode
+                    : (!state.isPeopleMode && state.query == term);
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: FilterChip(
+                    label: Text(term),
+                    selected: isSelected,
+                    onSelected: (_) {
+                      if (isPeople) {
+                        _searchController.clear();
+                        ref.read(searchViewModelProvider.notifier).enterPeopleMode();
+                      } else {
+                        _searchController.text = term;
+                        _submitSearch(term);
+                      }
+                      setState(() {});
+                    },
+                  ),
+                );
+              },
+            ),
+          ),
+          const SizedBox(height: 8),
           Expanded(
-            child: state.query.isEmpty
+            child: state.query.isEmpty && state.userPhotosUsername == null && !state.isPeopleMode
                 ? Center(
                     child: Text(
                       AppStrings.searchEmptyPrompt,
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withValues(alpha: 0.6),
+                      ),
+                    ),
+                  )
+                : state.isPeopleMode && state.userPhotosUsername == null && !state.isLoading && state.photos.isEmpty && state.error == null
+                ? Center(
+                    child: Text(
+                      AppStrings.searchPeoplePrompt,
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                         color: Theme.of(
                           context,
@@ -142,7 +202,14 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                           ),
                           const SizedBox(height: 16),
                           FilledButton(
-                            onPressed: () => _submitSearch(state.query),
+                            onPressed: () {
+                              final vm = ref.read(searchViewModelProvider.notifier);
+                              if (state.userPhotosUsername != null) {
+                                vm.loadUserPhotos(state.userPhotosUsername!);
+                              } else {
+                                _submitSearch(state.query);
+                              }
+                            },
                             child: const Text(AppStrings.buttonRetry),
                           ),
                         ],
@@ -152,7 +219,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                 : state.photos.isEmpty
                 ? Center(
                     child: Text(
-                      AppStrings.noResultsFor(state.query),
+                      AppStrings.noResultsFor(state.effectiveQuery),
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),
                   )

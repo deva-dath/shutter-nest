@@ -28,7 +28,23 @@ abstract final class AppStrings {
   // --- Search ---
   static const String searchHint = 'Search photos...';
   static const String searchEmptyPrompt = 'Enter a keyword to perform Search';
+  static const String searchPeoplePrompt = 'Enter a username and search to see their photos';
   static String noResultsFor(String query) => 'No results for "$query"';
+
+  /// Quick-search buttons below the search field. "People" uses GET /users/:username/photos; others use search.
+  static const List<String> searchSuggestions = [
+    'Nature',
+    'Cities',
+    'People',
+    'Animals',
+    'Food',
+    'Travel',
+    'Minimal',
+    'Ocean',
+  ];
+
+  /// When "People" chip is tapped we call GET /users/:username/photos with this username.
+  static const String peopleChipUsername = 'deva_007';
 
   // --- Home ---
   static const String homeNoPhotos = 'No photos yet';

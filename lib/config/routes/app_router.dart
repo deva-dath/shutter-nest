@@ -4,6 +4,7 @@ import 'package:shutter_nest/core/utils/shutter_nav_shell.dart';
 import 'package:shutter_nest/features/downloaded/view/downloaded_screen.dart';
 import 'package:shutter_nest/features/home/view/home_screen.dart';
 import 'package:shutter_nest/features/liked/view/liked_screen.dart';
+import 'package:shutter_nest/features/photo_detail/view/photo_detail_screen.dart';
 import 'package:shutter_nest/features/search/view/search_screen.dart';
 import 'package:shutter_nest/features/settings/view/settings_screen.dart';
 import 'package:shutter_nest/features/splash/view/splash_screen.dart';
@@ -16,6 +17,14 @@ class AppRouter {
         path: RouterName.splash.path,
         name: RouterName.splash.name,
         builder: (context, state) => const SplashPage(),
+      ),
+      GoRoute(
+        path: RouterName.photoDetail.path,
+        name: RouterName.photoDetail.name,
+        builder: (context, state) {
+          final photo = state.extra as dynamic;
+          return PhotoDetailScreen(photo: photo);
+        },
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) =>

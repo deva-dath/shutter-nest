@@ -33,4 +33,7 @@ class RouterName {
 
   /// Settings screen.
   static const settings = RouteItem(name: 'settings', path: '/settings');
+
+  /// Photo detail screen.
+  static const photoDetail = RouteItem(name: 'photoDetail', path: '/photo/:id');
 }
