@@ -2,6 +2,7 @@ import 'package:go_router/go_router.dart';
 import 'package:shutter_nest/app/constants/route_constants.dart';
 import 'package:shutter_nest/core/utils/shutter_nav_shell.dart';
 import 'package:shutter_nest/features/downloaded/view/downloaded_screen.dart';
+import 'package:shutter_nest/features/home/models/unsplash_photo_model.dart';
 import 'package:shutter_nest/features/home/view/home_screen.dart';
 import 'package:shutter_nest/features/liked/view/liked_screen.dart';
 import 'package:shutter_nest/features/photo_detail/view/photo_detail_screen.dart';
@@ -22,7 +23,7 @@ class AppRouter {
         path: RouterName.photoDetail.path,
         name: RouterName.photoDetail.name,
         builder: (context, state) {
-          final photo = state.extra as dynamic;
+          final photo = state.extra! as UnsplashPhoto;
           return PhotoDetailScreen(photo: photo);
         },
       ),

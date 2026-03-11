@@ -2,8 +2,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:go_router/go_router.dart';
 import 'package:shutter_nest/app/app_strings.dart';
 import 'package:shutter_nest/app/appcolors.dart';
+import 'package:shutter_nest/app/constants/route_constants.dart';
 import 'package:shutter_nest/core/providers/liked_photos_provider.dart';
 import 'package:shutter_nest/core/utils/shutter_app_bar.dart';
 import 'package:shutter_nest/core/widgets/like_heart_icon.dart';
@@ -268,6 +270,12 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                               onLikeTap: () => ref
                                   .read(likedPhotosProvider.notifier)
                                   .toggle(photo),
+                              onTap: () {
+                                context.push(
+                                  RouterName.photoDetail.path.replaceAll(':id', photo.id),
+                                  extra: photo,
+                                );
+                              },
                             );
                           },
                         ),
@@ -287,12 +295,14 @@ class _SearchPhotoTile extends StatefulWidget {
     required this.height,
     required this.isLiked,
     required this.onLikeTap,
+    this.onTap,
   });
 
   final UnsplashPhoto photo;
   final double height;
   final bool isLiked;
   final VoidCallback onLikeTap;
+  final VoidCallback? onTap;
 
   @override
   State<_SearchPhotoTile> createState() => _SearchPhotoTileState();
@@ -355,10 +365,12 @@ class _SearchPhotoTileState extends State<_SearchPhotoTile>
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(12),
-      child: SizedBox(
-        height: widget.height,
-        width: double.infinity,
-        child: Stack(
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: SizedBox(
+          height: widget.height,
+          width: double.infinity,
+          child: Stack(
           fit: StackFit.expand,
           clipBehavior: Clip.none,
           children: [
@@ -431,6 +443,7 @@ class _SearchPhotoTileState extends State<_SearchPhotoTile>
             ),
           ],
         ),
+      ),
       ),
     );
   }

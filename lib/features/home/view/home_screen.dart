@@ -34,12 +34,31 @@ class HomePage extends ConsumerStatefulWidget {
 }
 
 class _HomePageState extends ConsumerState<HomePage> {
+  final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
+    _scrollController.addListener(_onScroll);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(homeViewModelProvider.notifier).loadPhotos(perPage: 24);
     });
+  }
+
+  void _onScroll() {
+    final vm = ref.read(homeViewModelProvider.notifier);
+    final state = ref.read(homeViewModelProvider);
+    if (!state.hasMore || state.isLoading) return;
+    final pos = _scrollController.position;
+    if (pos.pixels >= pos.maxScrollExtent - 400) {
+      vm.loadMore();
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   static double _heightForPhoto(UnsplashPhoto photo, double crossAxisWidth) {
@@ -81,9 +100,10 @@ class _HomePageState extends ConsumerState<HomePage> {
                   ),
                 )
               : CustomScrollView(
+                  controller: _scrollController,
                   slivers: [
                     SliverPadding(
-                      padding: const EdgeInsets.fromLTRB(12, 12, 12, 24),
+                      padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
                       sliver: state.photos.isEmpty
                           ? const SliverToBoxAdapter(
                               child: SizedBox(
@@ -121,6 +141,14 @@ class _HomePageState extends ConsumerState<HomePage> {
                               },
                             ),
                     ),
+                    if (state.isLoading && state.photos.isNotEmpty)
+                      const SliverToBoxAdapter(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(vertical: 24),
+                          child: Center(child: CircularProgressIndicator()),
+                        ),
+                      ),
+                    const SliverToBoxAdapter(child: SizedBox(height: 24)),
                   ],
                 ),
     );

@@ -7,18 +7,20 @@ import 'package:shutter_nest/features/home/models/unsplash_photo_model.dart';
 /// Duration for the fade-out when unliking.
 const Duration _unlikeFadeDuration = Duration(milliseconds: 280);
 
-/// Tile for a liked photo: image, heart (red). Tap heart to unlike; tile fades out then is removed.
+/// Tile for a liked photo: image, heart (red). Tap tile to open detail; tap heart to unlike.
 class LikedPhotoTile extends StatefulWidget {
   const LikedPhotoTile({
     super.key,
     required this.photo,
     required this.height,
     required this.onUnlike,
+    this.onTap,
   });
 
   final UnsplashPhoto photo;
   final double height;
   final VoidCallback onUnlike;
+  final VoidCallback? onTap;
 
   @override
   State<LikedPhotoTile> createState() => _LikedPhotoTileState();
@@ -61,12 +63,14 @@ class _LikedPhotoTileState extends State<LikedPhotoTile>
   Widget build(BuildContext context) {
     return FadeTransition(
       opacity: _fadeAnimation,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: SizedBox(
-          height: widget.height,
-          width: double.infinity,
-          child: Stack(
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: SizedBox(
+            height: widget.height,
+            width: double.infinity,
+            child: Stack(
             fit: StackFit.expand,
             children: [
               CachedNetworkImage(
@@ -106,6 +110,7 @@ class _LikedPhotoTileState extends State<LikedPhotoTile>
             ],
           ),
         ),
+      ),
       ),
     );
   }

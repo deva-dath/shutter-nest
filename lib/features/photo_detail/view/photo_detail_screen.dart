@@ -51,7 +51,7 @@ class _PhotoDetailScreenState extends ConsumerState<PhotoDetailScreen> {
           // Photo section - starts at center, moves up on scroll
           SliverToBoxAdapter(
             child: SizedBox(
-              height: imageHeight,
+              height: imageHeight + 200,
               width: double.infinity,
               child: Stack(
                 fit: StackFit.expand,

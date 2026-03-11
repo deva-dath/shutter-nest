@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:go_router/go_router.dart';
 import 'package:shutter_nest/app/app_strings.dart';
+import 'package:shutter_nest/app/constants/route_constants.dart';
 import 'package:shutter_nest/core/utils/shutter_app_bar.dart';
 import 'package:shutter_nest/features/home/models/unsplash_photo_model.dart';
 import 'package:shutter_nest/features/liked/view/liked_photo_tile.dart';
@@ -92,6 +94,12 @@ class LikedPage extends ConsumerWidget {
                       photo: photo,
                       height: height,
                       onUnlike: () => ref.read(likedPhotosProvider.notifier).remove(photo.id),
+                      onTap: () {
+                        context.push(
+                          RouterName.photoDetail.path.replaceAll(':id', photo.id),
+                          extra: photo,
+                        );
+                      },
                     );
                   },
                 ),
