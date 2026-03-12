@@ -61,17 +61,28 @@ class UnsplashPhotoUrls {
     required this.regular,
     required this.small,
     required this.thumb,
+    this.full,
+    this.raw,
   });
 
   final String regular;
   final String small;
   final String thumb;
+  /// Highest quality (max dimensions). Prefer for download without compression.
+  final String? full;
+  /// Base URL for custom params. Use for download if full is null.
+  final String? raw;
+
+  /// Best URL for full-quality download (no compression): full ?? raw ?? regular.
+  String get downloadUrl => full ?? raw ?? regular;
 
   factory UnsplashPhotoUrls.fromJson(Map<String, dynamic> json) {
     return UnsplashPhotoUrls(
       regular: json['regular'] as String? ?? '',
       small: json['small'] as String? ?? '',
       thumb: json['thumb'] as String? ?? '',
+      full: json['full'] as String?,
+      raw: json['raw'] as String?,
     );
   }
 
@@ -79,6 +90,8 @@ class UnsplashPhotoUrls {
         'regular': regular,
         'small': small,
         'thumb': thumb,
+        if (full != null) 'full': full,
+        if (raw != null) 'raw': raw,
       };
 }
 

@@ -2,7 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shutter_nest/app/app_strings.dart';
+import 'package:shutter_nest/core/providers/downloaded_photos_provider.dart';
 import 'package:shutter_nest/core/providers/liked_photos_provider.dart';
+import 'package:shutter_nest/core/services/photo_download_service.dart';
 import 'package:shutter_nest/core/utils/shutter_app_bar.dart';
 import 'package:shutter_nest/core/widgets/like_heart_icon.dart';
 import 'package:shutter_nest/features/home/models/unsplash_photo_model.dart';
@@ -18,11 +20,31 @@ class PhotoDetailScreen extends ConsumerStatefulWidget {
 
 class _PhotoDetailScreenState extends ConsumerState<PhotoDetailScreen> {
   final ScrollController _scrollController = ScrollController();
+  bool _isDownloading = false;
 
   @override
   void dispose() {
     _scrollController.dispose();
     super.dispose();
+  }
+
+  Future<void> _onDownload() async {
+    if (_isDownloading) return;
+    setState(() => _isDownloading = true);
+    final url = widget.photo.urls.downloadUrl;
+    final error = await downloadPhotoToGallery(url);
+    if (!mounted) return;
+    setState(() => _isDownloading = false);
+    if (error == null) {
+      ref.read(downloadedPhotosProvider.notifier).add(widget.photo.id);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text(AppStrings.downloadSuccess)),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('${AppStrings.downloadFailed}: $error')),
+      );
+    }
   }
 
   @override
@@ -105,6 +127,19 @@ class _PhotoDetailScreenState extends ConsumerState<PhotoDetailScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Center(
+                    child: TextButton(
+                      onPressed: _isDownloading ? null : _onDownload,
+                      child: _isDownloading
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : const Text(AppStrings.buttonDownload),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
                   if (widget.photo.description != null &&
                       widget.photo.description!.isNotEmpty)
                     Padding(

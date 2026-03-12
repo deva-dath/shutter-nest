@@ -65,6 +65,9 @@ abstract final class AppStrings {
 
   // --- Buttons ---
   static const String buttonRetry = 'Retry';
+  static const String buttonDownload = 'Download';
+  static const String downloadSuccess = 'Saved to gallery';
+  static const String downloadFailed = 'Download failed';
 
   // --- Errors / fallback messages (user-facing or API fallbacks) ---
   static const String errorRequestFailed = 'Request failed';
